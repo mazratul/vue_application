@@ -1,26 +1,56 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <ErrorComponent v-if="errorOccurred" />
+  <template v-else>
+    <TopComponent />
+    <PokemonDisplay :pokemons="pokemons" />
+  </template>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TopComponent from "./components/TopComponent.vue";
+import PokemonDisplay from "./components/PokemonDisplay.vue";
+import ErrorComponent from "./components/ErrorComponent.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    TopComponent,
+    PokemonDisplay,
+    ErrorComponent,
+  },
+  data() {
+    return {
+      errorOccurred: false,
+      pokemons: [],
+    };
+  },
+  methods: {
+    async fetchPokemons() {
+      try {
+        const res = await fetch(
+          "https://ratul-mazumder-porfolio.netlify.app/api"
+        );
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        this.errorOccurred = true;
+      }
+    },
+  },
+  async created() {
+    this.pokemons = await this.fetchPokemons();
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: snow;
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
 }
 </style>
